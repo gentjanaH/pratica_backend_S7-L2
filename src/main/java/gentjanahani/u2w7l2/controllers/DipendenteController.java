@@ -7,6 +7,7 @@ import gentjanahani.u2w7l2.payloads.UpdateDipendenteDTO;
 import gentjanahani.u2w7l2.services.DipendenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +54,22 @@ public class DipendenteController {
         dipendenteService.findAndDelete(idDipendente);
     }
 
+    // 1. POST http://localhost:3026/dipendenti (+ Payload)
+    @PreAuthorize("hasAuthority('AMMINISTRATORE')")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Dipendente createDipendente(@RequestBody @Validated DipendenteDTO payload, BindingResult validationResult) {
+        if (validationResult.hasErrors()) {
+            List<String> errorsList = validationResult.getFieldErrors()
+                    .stream()
+                    .map(fieldError -> fieldError.getDefaultMessage())
+                    .toList();
+
+            throw new ValidationException(errorsList);
+        } else {
+            return this.dipendenteService.save(payload);
+        }
+    }
 
     // 2. PATCH http://localhost:3026/dipendenti/{idDipendente}
     @PatchMapping("/{idDipendente}/avatar")

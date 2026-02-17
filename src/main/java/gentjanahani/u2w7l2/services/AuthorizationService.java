@@ -13,19 +13,19 @@ public class AuthorizationService {
 
     private final DipendenteService dipendenteService;
     private final CreateAndVerify createAndVerify;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder bcrypt;
 
     @Autowired
-    public AuthorizationService(DipendenteService dipendenteService, CreateAndVerify createAndVerify, PasswordEncoder passwordEncoder) {
+    public AuthorizationService(DipendenteService dipendenteService, CreateAndVerify createAndVerify, PasswordEncoder bcrypt) {
         this.dipendenteService = dipendenteService;
         this.createAndVerify = createAndVerify;
-        this.passwordEncoder = passwordEncoder;
+        this.bcrypt = bcrypt;
     }
 
     public String checkAndGenerate(LoginDTO bodyLogin) {
         Dipendente dip = this.dipendenteService.findByEmail(bodyLogin.mail());
 
-        if (passwordEncoder.matches(bodyLogin.password(), dip.getPassword())) {
+        if (bcrypt.matches(bodyLogin.password(), dip.getPassword())) {
             String accesToken = createAndVerify.generateToken(dip);
 
             return accesToken;

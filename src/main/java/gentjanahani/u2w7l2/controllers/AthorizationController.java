@@ -32,5 +32,22 @@ public class AthorizationController {
         return new LoginResponseDTO(this.authorizationService.checkAndGenerate(bodyLogin));
     }
 
+    // 1. POST http://localhost:3026/dipendenti (+ Payload)
+    @PostMapping("/dipendenti")
+
+    @ResponseStatus(HttpStatus.CREATED)
+    public Dipendente createDipendente(@RequestBody @Validated DipendenteDTO payload, BindingResult validationResult) {
+        if (validationResult.hasErrors()) {
+            List<String> errorsList = validationResult.getFieldErrors()
+                    .stream()
+                    .map(fieldError -> fieldError.getDefaultMessage())
+                    .toList();
+
+            throw new ValidationException(errorsList);
+        } else {
+            return this.dipendenteService.save(payload);
+        }
+    }
+
 
 }

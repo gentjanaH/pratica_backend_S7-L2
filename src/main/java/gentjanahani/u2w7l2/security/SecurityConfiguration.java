@@ -29,12 +29,13 @@ public class SecurityConfiguration {
 
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers("/**").permitAll());
 
+
         return httpSecurity.build();
     }
 
     //creo il bean PasswordEncoder
     @Bean
-    public PasswordEncoder encoder() {
+    public PasswordEncoder encodePassword() {
         return new BCryptPasswordEncoder(12);//numeri di round
     }
 }

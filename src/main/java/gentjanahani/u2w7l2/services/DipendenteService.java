@@ -25,13 +25,13 @@ public class DipendenteService {
 
     private final DipendenteRepository dipendenteRepository;
     private final Cloudinary cloudinaryUploader;
-    private final PasswordEncoder passwordEncoder;//dopo aver creato  il bean, lo passo nel costruttore del dipendenteService
+    private final PasswordEncoder bcrypt;//dopo aver creato  il bean, lo passo nel costruttore del dipendenteService
 
     @Autowired
     public DipendenteService(DipendenteRepository dipendenteRepository, Cloudinary cloudinaryUploader, PasswordEncoder passwordEncoder) {
         this.dipendenteRepository = dipendenteRepository;
         this.cloudinaryUploader = cloudinaryUploader;
-        this.passwordEncoder = passwordEncoder;
+        this.bcrypt = passwordEncoder;
     }
 
     public Dipendente save(DipendenteDTO payload) {
@@ -44,7 +44,7 @@ public class DipendenteService {
             throw new BadRequestException("Lo username" + dipentente.getUsername() + "  è già in uso!");
         });
         //ora invece di passarli direttamente la password dal payoload, uso il bean passwordEncoder
-        Dipendente newDipendente = new Dipendente(payload.username(), payload.name(), payload.surname(), payload.mail(), passwordEncoder.encode(payload.password()));
+        Dipendente newDipendente = new Dipendente(payload.username(), payload.name(), payload.surname(), payload.mail(), bcrypt.encode(payload.password()));
         newDipendente.setAvatar("https://ui-avatars.com/api?name=" + payload.surname());
 
         Dipendente savedDip = this.dipendenteRepository.save(newDipendente);
