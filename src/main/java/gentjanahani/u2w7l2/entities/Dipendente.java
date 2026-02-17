@@ -1,5 +1,6 @@
 package gentjanahani.u2w7l2.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonIgnoreProperties({"password", "accountNonExpired", "accountNonLocked", "authorities", "credentialsNonExpired", "enabled"})
 public class Dipendente {
     @Id
     @GeneratedValue
@@ -33,7 +35,7 @@ public class Dipendente {
         this.name = name;
         this.surname = surname;
         this.email = email;
-        this.password=password;
+        this.password = password;
     }
 
 }

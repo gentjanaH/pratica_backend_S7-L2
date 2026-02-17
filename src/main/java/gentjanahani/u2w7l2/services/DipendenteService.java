@@ -10,6 +10,7 @@ import gentjanahani.u2w7l2.payloads.UpdateDipendenteDTO;
 import gentjanahani.u2w7l2.repository.DipendenteRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,11 +25,13 @@ public class DipendenteService {
 
     private final DipendenteRepository dipendenteRepository;
     private final Cloudinary cloudinaryUploader;
+    private final PasswordEncoder passwordEncoder;//dopo aver creato  il bean, lo passo nel costruttore del dipendenteService
 
     @Autowired
-    public DipendenteService(DipendenteRepository dipendenteRepository, Cloudinary cloudinaryUploader) {
+    public DipendenteService(DipendenteRepository dipendenteRepository, Cloudinary cloudinaryUploader, PasswordEncoder passwordEncoder) {
         this.dipendenteRepository = dipendenteRepository;
         this.cloudinaryUploader = cloudinaryUploader;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Dipendente save(DipendenteDTO payload) {
@@ -40,8 +43,8 @@ public class DipendenteService {
         this.dipendenteRepository.findByUsername(payload.username()).ifPresent(dipentente -> {
             throw new BadRequestException("Lo username" + dipentente.getUsername() + "  è già in uso!");
         });
-
-        Dipendente newDipendente = new Dipendente(payload.username(), payload.name(), payload.surname(), payload.mail(), payload.password());
+        //ora invece di passarli direttamente la password dal payoload, uso il bean passwordEncoder
+        Dipendente newDipendente = new Dipendente(payload.username(), payload.name(), payload.surname(), payload.mail(), passwordEncoder.encode(payload.password()));
         newDipendente.setAvatar("https://ui-avatars.com/api?name=" + payload.surname());
 
         Dipendente savedDip = this.dipendenteRepository.save(newDipendente);
@@ -56,15 +59,15 @@ public class DipendenteService {
         return dipendente;
     }
 
-    public Dipendente findByEmail(String mail){
-        return this.dipendenteRepository.findByEmail(mail).orElseThrow(()->new NotFoundException("Il dipendente con email " + mail + " non è stato trovato."));
+    public Dipendente findByEmail(String mail) {
+        return this.dipendenteRepository.findByEmail(mail).orElseThrow(() -> new NotFoundException("Il dipendente con email " + mail + " non è stato trovato."));
     }
 
-    public Dipendente updateDipendente(UUID idDipendente, UpdateDipendenteDTO payload){
-        Dipendente dipModificato=findDipendenteById(idDipendente);
+    public Dipendente updateDipendente(UUID idDipendente, UpdateDipendenteDTO payload) {
+        Dipendente dipModificato = findDipendenteById(idDipendente);
 
         this.dipendenteRepository.findByUsername(payload.username()).ifPresent(dipentente -> {
-            if(!dipentente.getIdDipendente().equals(idDipendente)){
+            if (!dipentente.getIdDipendente().equals(idDipendente)) {
                 throw new BadRequestException("Lo username" + dipentente.getUsername() + "  è già in uso!");
             }
         });
@@ -75,12 +78,12 @@ public class DipendenteService {
         return dipendenteRepository.save(dipModificato);
     }
 
-    public List<Dipendente> getAllDipendenti(){
+    public List<Dipendente> getAllDipendenti() {
         return dipendenteRepository.findAll();
     }
 
-    public void findAndDelete(UUID idDipendente){
-        Dipendente dipendente=findDipendenteById(idDipendente);
+    public void findAndDelete(UUID idDipendente) {
+        Dipendente dipendente = findDipendenteById(idDipendente);
 
         dipendenteRepository.delete(dipendente);
     }

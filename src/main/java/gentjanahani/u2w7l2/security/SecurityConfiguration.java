@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 //questa classe mi serve per configurare la Security Filter Chain (sequenza di filtri che vengono eseguiti
@@ -26,5 +28,11 @@ public class SecurityConfiguration {
         httpSecurity.authorizeHttpRequests(request->request.requestMatchers("/**").permitAll());
 
         return httpSecurity.build();
+    }
+
+    //creo il bean PasswordEncoder
+    @Bean
+    public PasswordEncoder encoder(){
+        return new BCryptPasswordEncoder(12);//numeri di round
     }
 }
