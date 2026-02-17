@@ -26,45 +26,30 @@ public class DipendenteController {
         this.dipendenteService = dipendenteService;
     }
 
-    // 1. POST http://localhost:3026/dipendenti (+ Payload)
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Dipendente createDipendente(@RequestBody @Validated DipendenteDTO payload, BindingResult validationResult) {
-        if (validationResult.hasErrors()) {
-            List<String> errorsList = validationResult.getFieldErrors()
-                    .stream()
-                    .map(fieldError -> fieldError.getDefaultMessage())
-                    .toList();
-
-            throw new ValidationException(errorsList);
-        } else {
-            return this.dipendenteService.save(payload);
-        }
-    }
 
     // http://localhost:3026/dipendenti/{idDipendente}
     @PutMapping("/{idDipendente}")
-    public DipendenteDTO getAndUpdate(@PathVariable UUID idDipendente, @RequestBody UpdateDipendenteDTO payload){
-        Dipendente aggiornato =dipendenteService.updateDipendente(idDipendente,payload);
+    public DipendenteDTO getAndUpdate(@PathVariable UUID idDipendente, @RequestBody UpdateDipendenteDTO payload) {
+        Dipendente aggiornato = dipendenteService.updateDipendente(idDipendente, payload);
         return new DipendenteDTO(aggiornato);
     }
 
 
     @GetMapping
-    public List<Dipendente> getDipendenti(){
-        return  this.dipendenteService.getAllDipendenti();
+    public List<Dipendente> getDipendenti() {
+        return this.dipendenteService.getAllDipendenti();
     }
 
     @GetMapping("/{idDipendente}")
-    public DipendenteDTO getDipendente(@PathVariable UUID idDipendente){
-        Dipendente dipendente=dipendenteService.findDipendenteById(idDipendente);
-        return  new DipendenteDTO(dipendente);
+    public DipendenteDTO getDipendente(@PathVariable UUID idDipendente) {
+        Dipendente dipendente = dipendenteService.findDipendenteById(idDipendente);
+        return new DipendenteDTO(dipendente);
     }
 
     // http://localhost:3026/dipendenti/{idDipendente}
     @DeleteMapping("/{idDipendente}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void findAndDelete(@PathVariable UUID idDipendente){
+    public void findAndDelete(@PathVariable UUID idDipendente) {
         dipendenteService.findAndDelete(idDipendente);
     }
 

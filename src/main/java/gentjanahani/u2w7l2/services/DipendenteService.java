@@ -48,7 +48,7 @@ public class DipendenteService {
         newDipendente.setAvatar("https://ui-avatars.com/api?name=" + payload.surname());
 
         Dipendente savedDip = this.dipendenteRepository.save(newDipendente);
-        log.info("Il dipendente con id {} è stato salvato correttamente.", payload.surname());
+        log.info("Il dipendente {} è stato salvato correttamente.", payload.surname());
 
         return savedDip;
     }

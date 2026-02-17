@@ -1,15 +1,17 @@
 package gentjanahani.u2w7l2.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,7 +20,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties({"password", "accountNonExpired", "accountNonLocked", "authorities", "credentialsNonExpired", "enabled"})
-public class Dipendente {
+public class Dipendente implements UserDetails {
     @Id
     @GeneratedValue
     @Setter(AccessLevel.NONE)
@@ -29,6 +31,8 @@ public class Dipendente {
     private String email;
     private String password;
     private String avatar;
+    @Enumerated(EnumType.STRING)
+    private Ruoli role;
 
     public Dipendente(String username, String name, String surname, String email, String password) {
         this.username = username;
@@ -36,6 +40,12 @@ public class Dipendente {
         this.surname = surname;
         this.email = email;
         this.password = password;
+        this.role = Ruoli.DIPENDENTE;
     }
 
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
+    }
 }
