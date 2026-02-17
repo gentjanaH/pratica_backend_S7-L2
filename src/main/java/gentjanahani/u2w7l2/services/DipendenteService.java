@@ -3,6 +3,7 @@ package gentjanahani.u2w7l2.services;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import gentjanahani.u2w7l2.entities.Dipendente;
+import gentjanahani.u2w7l2.entities.Ruoli;
 import gentjanahani.u2w7l2.exceptions.BadRequestException;
 import gentjanahani.u2w7l2.exceptions.NotFoundException;
 import gentjanahani.u2w7l2.payloads.DipendenteDTO;
@@ -76,6 +77,13 @@ public class DipendenteService {
         dipModificato.setUsername(payload.username());
 
         return dipendenteRepository.save(dipModificato);
+    }
+
+    //metodo per cambiare il ruolo
+    public Dipendente cambiaRuolo(UUID idDipendente, Ruoli nuovoRuolo) {
+        Dipendente dip = findDipendenteById(idDipendente);
+        dip.setRole(nuovoRuolo);
+        return dipendenteRepository.save(dip);
     }
 
     public List<Dipendente> getAllDipendenti() {

@@ -3,6 +3,7 @@ package gentjanahani.u2w7l2.controllers;
 import gentjanahani.u2w7l2.entities.Dipendente;
 import gentjanahani.u2w7l2.exceptions.ValidationException;
 import gentjanahani.u2w7l2.payloads.DipendenteDTO;
+import gentjanahani.u2w7l2.payloads.RuoloDipendenteDTO;
 import gentjanahani.u2w7l2.payloads.UpdateDipendenteDTO;
 import gentjanahani.u2w7l2.services.DipendenteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +48,6 @@ public class DipendenteController {
         return new DipendenteDTO(dipendente);
     }
 
-    // http://localhost:3026/dipendenti/{idDipendente}
-    @DeleteMapping("/{idDipendente}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void findAndDelete(@PathVariable UUID idDipendente) {
-        dipendenteService.findAndDelete(idDipendente);
-    }
 
     // 1. POST http://localhost:3026/dipendenti (+ Payload)
     @PreAuthorize("hasAuthority('AMMINISTRATORE')")
@@ -77,5 +72,21 @@ public class DipendenteController {
         return this.dipendenteService.uploadAvatar(idDipendente, file);
 
 
+    }
+
+    //3. PATCH http://localhost:3026/dipendenti/{idDipendente}/role
+    @PatchMapping("/{idDipendente}/role")
+    @PreAuthorize("hasAuthority('AMMINISTRATORE')")
+    public Dipendente cambiaRuolo(@PathVariable UUID idDipendente, @RequestBody @Validated RuoloDipendenteDTO payload) {
+        return dipendenteService.cambiaRuolo(idDipendente, payload.role());
+
+    }
+
+    //4. DELETE http://localhost:3026/dipendenti/{idDipendente}
+    @DeleteMapping("/{idDipendente}")
+    @PreAuthorize("hasAuthority('AMMINISTRATORE')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void findAndDelete(@PathVariable UUID idDipendente) {
+        dipendenteService.findAndDelete(idDipendente);
     }
 }
