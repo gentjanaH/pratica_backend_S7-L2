@@ -28,6 +28,12 @@ public class DipendenteController {
         this.dipendenteService = dipendenteService;
     }
 
+    //controller dipendenti
+    //un dipendente può:
+    //-accedere al proprio profilo;
+    //-modificare il proprio proprio profilo;
+    //-aggiornare l'immagine profilo;
+
 
     // http://localhost:3026/dipendenti/{idDipendente}
     @PutMapping("/{idDipendente}")
@@ -37,35 +43,6 @@ public class DipendenteController {
     }
 
 
-    @GetMapping
-    public List<Dipendente> getDipendenti() {
-        return this.dipendenteService.getAllDipendenti();
-    }
-
-    @GetMapping("/{idDipendente}")
-    public DipendenteDTO getDipendente(@PathVariable UUID idDipendente) {
-        Dipendente dipendente = dipendenteService.findDipendenteById(idDipendente);
-        return new DipendenteDTO(dipendente);
-    }
-
-
-    // 1. POST http://localhost:3026/dipendenti (+ Payload)
-    @PreAuthorize("hasAuthority('AMMINISTRATORE')")
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Dipendente createDipendente(@RequestBody @Validated DipendenteDTO payload, BindingResult validationResult) {
-        if (validationResult.hasErrors()) {
-            List<String> errorsList = validationResult.getFieldErrors()
-                    .stream()
-                    .map(fieldError -> fieldError.getDefaultMessage())
-                    .toList();
-
-            throw new ValidationException(errorsList);
-        } else {
-            return this.dipendenteService.save(payload);
-        }
-    }
-
     // 2. PATCH http://localhost:3026/dipendenti/{idDipendente}
     @PatchMapping("/{idDipendente}/avatar")
     public Dipendente uploadImage(@PathVariable UUID idDipendente, @RequestParam("user_picture") MultipartFile file) {
@@ -74,19 +51,5 @@ public class DipendenteController {
 
     }
 
-    //3. PATCH http://localhost:3026/dipendenti/{idDipendente}/role
-    @PatchMapping("/{idDipendente}/role")
-    @PreAuthorize("hasAuthority('AMMINISTRATORE')")
-    public Dipendente cambiaRuolo(@PathVariable UUID idDipendente, @RequestBody @Validated RuoloDipendenteDTO payload) {
-        return dipendenteService.cambiaRuolo(idDipendente, payload.role());
 
-    }
-
-    //4. DELETE http://localhost:3026/dipendenti/{idDipendente}
-    @DeleteMapping("/{idDipendente}")
-    @PreAuthorize("hasAuthority('AMMINISTRATORE')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void findAndDelete(@PathVariable UUID idDipendente) {
-        dipendenteService.findAndDelete(idDipendente);
-    }
 }

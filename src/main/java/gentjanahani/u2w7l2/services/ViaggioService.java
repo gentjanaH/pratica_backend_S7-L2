@@ -42,4 +42,17 @@ public class ViaggioService {
         viaggio.setStato(payload.stato());
         return viaggioRepository.save(viaggio);
     }
+
+    public Viaggio findAndUpdateViaggio(UUID idViaggio, ViaggioDTO payload) {
+        Viaggio viaggio = viaggioRepository.findByIdViaggio(idViaggio);
+        if (viaggio == null) throw new NotFoundException(idViaggio);
+        viaggio.setDestination(payload.destination());
+        viaggio.setTravelDate(payload.travelDate());
+        return viaggioRepository.save(viaggio);
+    }
+
+    public void findAndDelete(UUID idViaggio) {
+        Viaggio viaggio = viaggioRepository.findByIdViaggio(idViaggio);
+        viaggioRepository.delete(viaggio);
+    }
 }
