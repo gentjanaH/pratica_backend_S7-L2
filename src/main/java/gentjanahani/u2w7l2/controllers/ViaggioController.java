@@ -69,7 +69,7 @@ public class ViaggioController {
 
     // 3. PATCH http://localhost:3026/viaggi/{idViaggio} (+ Payload)
     @PreAuthorize("hasAnyAuthority('AMMINISTRATORE', 'ORGANIZZATORE')")
-    @PatchMapping("/{idViaggio}")
+    @PatchMapping("/{idViaggio}/stato")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Viaggio setStatusViaggio(@PathVariable UUID idViaggio, @RequestBody @Validated ViaggioStatusDTO payload, BindingResult validationResult) {
         if (validationResult.hasErrors()) {
